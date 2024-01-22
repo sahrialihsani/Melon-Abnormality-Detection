@@ -7,6 +7,7 @@ import requests
 from PIL import Image
 from io import BytesIO
 import numpy as np
+import pandas as pd
 import cv2
 class Streamlit_YOLOV7(SingleInference_YOLOV7):
     '''
@@ -166,7 +167,8 @@ class Streamlit_YOLOV7(SingleInference_YOLOV7):
         output_format="auto",
         )
         flat_list = self.detection_results[0][0]
-        st.table(flat_list)
+        df = pd.DataFrame(flat_list)
+        st.table(df)
         
         self.image = None
 
