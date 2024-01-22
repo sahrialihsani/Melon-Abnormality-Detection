@@ -206,10 +206,7 @@ class Streamlit_YOLOV7(SingleInference_YOLOV7):
         st.subheader("""Detection Result""")
         st.table(df)
         doc_ref = db.collection("posts").document(title)
-    	doc_ref.set({
-    		"kelas": df['name'],
-    		"akurasi": df['confidence']
-    	})
+    	doc_ref.set({"kelas": df['name'],"akurasi": df['confidence']})
         # st.dataframe(json_array)
 if __name__=='__main__':
     app=Streamlit_YOLOV7()
