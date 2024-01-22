@@ -175,7 +175,10 @@ class Streamlit_YOLOV7(SingleInference_YOLOV7):
         st.subheader("""Detection Result""")
         st.table(df)
         for index in df.index:
-            doc_ref = db.collection("results").document()
+            # Generate a unique document ID based on the date and time
+            current_date = datetime.datetime.now().strftime("%Y-%m-%d")
+            unique_identifier = f"{current_date}_{index}"  # You can customize this format as needed
+            doc_ref = db.collection("results").document(unique_identifier)
             doc_ref.set({"kelas": df.loc[index, 'name'], "akurasi": df.loc[index, 'confidence']})
 if __name__=='__main__':
     app=Streamlit_YOLOV7()
