@@ -43,11 +43,9 @@ class Streamlit_YOLOV7(SingleInference_YOLOV7):
         '''
         super().__init__(img_size,path_yolov7_weights,path_img_i,device_i=device_i)
     def main(self):
-        st.title('Custom YoloV7 Object Detector')
+        st.title('Melon Abnormality Detection')
         st.subheader(""" Upload an image and run YoloV7 on it.  
-        This model was trained to detect melon abnormality on leaves. 
-        Notice where the model fails.
-        (i.e. objects too close up & too far away):\n""")
+        This model was trained to detect melon abnormality on leaves.\n""")
         st.markdown(
             """
         <style>
