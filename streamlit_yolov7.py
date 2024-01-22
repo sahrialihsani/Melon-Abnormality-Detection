@@ -201,6 +201,7 @@ class Streamlit_YOLOV7(SingleInference_YOLOV7):
         # df2 = pd.DataFrame(json_data)
         
         # Display DataFrame using st.table
+        st.subheader("""Detection Result""")
         st.table(df)
         # st.dataframe(json_array)
 if __name__=='__main__':
