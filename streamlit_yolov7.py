@@ -170,46 +170,14 @@ class Streamlit_YOLOV7(SingleInference_YOLOV7):
         )
         json_array = self.detection_results[0]
         # Convert the list of dictionaries to a Pandas DataFrame
-        # df = pd.DataFrame(json_array)
-        # df["confidence"] = pd.to_numeric(df["confidence"])
         df = pd.DataFrame(json_array)
-        # Convert 'confidence' column to numeric
-        # df['confidence'] = pd.to_numeric(df['confidence'], errors='coerce')
         self.image = None
-        # # Provided JSON data
-        # json_data = [
-        #     {"name": "normal", "confidence": 50.1},
-        #     {"name": "abnormal", "confidence": 50.2},
-        #     {"name": "normal", "confidence": 50.3},
-        #     {"name": "abnormal", "confidence": 51.8},
-        #     {"name": "abnormal", "confidence": 60.4},
-        #     {"name": "normal", "confidence": 65},
-        #     {"name": "abnormal", "confidence": 65.3},
-        #     {"name": "normal", "confidence": 77.8},
-        #     {"name": "normal", "confidence": 79.1},
-        #     {"name": "normal", "confidence": 81.8},
-        #     {"name": "normal", "confidence": 83.4},
-        #     {"name": "abnormal", "confidence": 87.5},
-        #     {"name": "abnormal", "confidence": 88.6},
-        #     {"name": "abnormal", "confidence": 89.5},
-        #     {"name": "abnormal", "confidence": 90.4},
-        #     {"name": "normal", "confidence": 92},
-        #     {"name": "abnormal", "confidence": 92.3},
-        #     {"name": "abnormal", "confidence": 92.5},
-        #     {"name": "abnormal", "confidence": 92.7},
-        # ]
-        
-        # # Convert JSON to DataFrame
-        # df2 = pd.DataFrame(json_data)
-        
-        # Display DataFrame using st.table
         st.subheader("""Detection Result""")
         st.table(df)
         for index in df.index:
             id = f"document_{index}"  # You can customize the title format as needed
             doc_ref = db.collection("results").document(id)
             doc_ref.set({"kelas": df.loc[index, 'name'], "akurasi": df.loc[index, 'confidence']})
-        # st.dataframe(json_array)
 if __name__=='__main__':
     app=Streamlit_YOLOV7()
 
