@@ -169,6 +169,7 @@ class Streamlit_YOLOV7(SingleInference_YOLOV7):
         json_array = self.detection_results
         # Convert the list of dictionaries to a Pandas DataFrame
         df = pd.DataFrame(json_array)
+        df["confidence"] = pd.to_numeric(df["confidence"])
         # df = pd.DataFrame(flat_list)
         st.write(df)
         
