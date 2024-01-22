@@ -135,39 +135,39 @@ class Streamlit_YOLOV7(SingleInference_YOLOV7):
         else:
             return None
     
-     def predict(self):
+    def predict(self):
         self.conf_thres = self.conf_selection
         self.iou_thres = self.iou_selection
         st.write('Loading image')
         self.load_cv2mat(self.im0)
         st.write('Making inference')
         self.inference()
-
+        
         self.img_screen = Image.fromarray(self.image).convert('RGB')
-
+        
         self.capt = 'DETECTED:'
         current_image_results = []  # Store results for the current image
-
+        
         if len(self.predicted_bboxes_PascalVOC) > 0:
-            for item in self.predicted_bboxes_PascalVOC:
-                name = str(item[0])
-                conf = str(round(100 * item[-1], 2))
-                self.capt = self.capt + ' name=' + name + ' confidence=' + conf + '%, '
-                current_image_results.append({'name': name, 'confidence': float(conf)})
-
+        for item in self.predicted_bboxes_PascalVOC:
+            name = str(item[0])
+            conf = str(round(100 * item[-1], 2))
+            self.capt = self.capt + ' name=' + name + ' confidence=' + conf + '%, '
+            current_image_results.append({'name': name, 'confidence': float(conf)})
+        
         # Save the detection results for the current image
         self.detection_results.append(current_image_results)
-
+        
         st.image(
-            self.img_screen,
-            caption=self.capt,
-            width=None,
-            use_column_width=None,
-            clamp=False,
-            channels="RGB",
-            output_format="auto",
+        self.img_screen,
+        caption=self.capt,
+        width=None,
+        use_column_width=None,
+        clamp=False,
+        channels="RGB",
+        output_format="auto",
         )
-
+        
         self.image = None
 
 if __name__=='__main__':
