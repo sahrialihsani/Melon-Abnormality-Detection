@@ -68,7 +68,10 @@ class Streamlit_YOLOV7(SingleInference_YOLOV7):
         }
         .st-bb {
             background-color: black;
-        }
+        },
+        .st-eb {
+            color: black;
+        },
         .st-at {
             background-color: green;
         }
@@ -81,14 +84,6 @@ class Streamlit_YOLOV7(SingleInference_YOLOV7):
         header .decoration {
             background-image: None);
         },
-        .title-text {
-            color: white);
-        },
-        .markdown-text-container p {
-            color: white);
-        },
-
-
         </style>
         """,
             unsafe_allow_html=True,
