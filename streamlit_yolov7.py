@@ -165,6 +165,7 @@ class Streamlit_YOLOV7(SingleInference_YOLOV7):
         channels="RGB",
         output_format="auto",
         )
+        st.write(self.detection_results)
         
         self.image = None
 
@@ -183,5 +184,3 @@ if __name__=='__main__':
     app.load_model() #Load the yolov7 model
     
     app.main()
-    if hasattr(app, 'detection_results'):
-        st.table(app.detection_results)
