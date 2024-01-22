@@ -2,6 +2,7 @@ opencv-contrib-python-headless
 streamlit
 torch
 torchvision
+imghdr
 requests
 yolov7
 google-cloud-firestore
