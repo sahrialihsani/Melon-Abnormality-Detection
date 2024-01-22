@@ -174,9 +174,34 @@ class Streamlit_YOLOV7(SingleInference_YOLOV7):
         # Convert 'confidence' column to numeric
         # df['confidence'] = pd.to_numeric(df['confidence'], errors='coerce')
         self.image = None
-        df2 = pd.DataFrame(np.random.randn(10, 20), columns=("col %d" % i for i in range(20)))
+        # Provided JSON data
+        json_data = [
+            {"name": "normal", "confidence": 50.1},
+            {"name": "abnormal", "confidence": 50.2},
+            {"name": "normal", "confidence": 50.3},
+            {"name": "abnormal", "confidence": 51.8},
+            {"name": "abnormal", "confidence": 60.4},
+            {"name": "normal", "confidence": 65},
+            {"name": "abnormal", "confidence": 65.3},
+            {"name": "normal", "confidence": 77.8},
+            {"name": "normal", "confidence": 79.1},
+            {"name": "normal", "confidence": 81.8},
+            {"name": "normal", "confidence": 83.4},
+            {"name": "abnormal", "confidence": 87.5},
+            {"name": "abnormal", "confidence": 88.6},
+            {"name": "abnormal", "confidence": 89.5},
+            {"name": "abnormal", "confidence": 90.4},
+            {"name": "normal", "confidence": 92},
+            {"name": "abnormal", "confidence": 92.3},
+            {"name": "abnormal", "confidence": 92.5},
+            {"name": "abnormal", "confidence": 92.7},
+        ]
         
-        st.dataframe(df2.style.highlight_max(axis=0))
+        # Convert JSON to DataFrame
+        df2 = pd.DataFrame(json_data)
+        
+        # Display DataFrame using st.table
+        st.table(df2)
         # st.dataframe(json_array)
 if __name__=='__main__':
     app=Streamlit_YOLOV7()
