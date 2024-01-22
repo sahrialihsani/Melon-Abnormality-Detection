@@ -175,8 +175,7 @@ class Streamlit_YOLOV7(SingleInference_YOLOV7):
         st.subheader("""Detection Result""")
         st.table(df)
         for index in df.index:
-            id = f"document_{index}"  # You can customize the title format as needed
-            doc_ref = db.collection("results").document(id)
+            doc_ref = db.collection("results").document()
             doc_ref.set({"kelas": df.loc[index, 'name'], "akurasi": df.loc[index, 'confidence']})
 if __name__=='__main__':
     app=Streamlit_YOLOV7()
