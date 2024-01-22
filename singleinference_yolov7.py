@@ -146,49 +146,49 @@ class SingleInference_YOLOV7:
             log_i=f'load_cv2mat \t Bad self.im0\n {self.im0}'
             self.logging.error(log_i)
 
-
     def inference(self):
         '''
         Inferences with the yolov7 model, given a valid input image (self.im)
         '''
         # Inference
-        if type(self.im)!=type(None):
+        if type(self.im) != type(None):
             self.outputs = self.model(self.im, augment=False)[0]
             # Apply NMS
             self.outputs = self.non_max_suppression(self.outputs, self.conf_thres, self.iou_thres, classes=None, agnostic=False)
-            img_i=self.im0.copy()
+            img_i = self.im0.copy()
             self.ori_images = [img_i]
-            self.predicted_bboxes_PascalVOC=[]
-            for i,det in enumerate(self.outputs):
+            self.predicted_bboxes_PascalVOC = []
+
+            for i, det in enumerate(self.outputs):
                 if len(det):
-                    # Rescale boxes from img_size to im0 size
-                    #det[:, :4] = self.scale_coords(self.im.shape[2:], det[:, :4], self.im0.shape).round()
-                    #Visualizing bounding box prediction.
-                    batch_id=i
+                    batch_id = i
                     image = self.ori_images[int(batch_id)]
 
-                    for j,(*bboxes,score,cls_id) in enumerate(reversed(det)):
-                        x0=float(bboxes[0].cpu().detach().numpy())
-                        y0=float(bboxes[1].cpu().detach().numpy())
-                        x1=float(bboxes[2].cpu().detach().numpy())
-                        y1=float(bboxes[3].cpu().detach().numpy())
-                        self.box = np.array([x0,y0,x1,y1])
-                        self.box -= np.array(self.dwdh*2)
+                    for j, (*bboxes, score, cls_id) in enumerate(reversed(det)):
+                        x0 = float(bboxes[0].cpu().detach().numpy())
+                        y0 = float(bboxes[1].cpu().detach().numpy())
+                        x1 = float(bboxes[2].cpu().detach().numpy())
+                        y1 = float(bboxes[3].cpu().detach().numpy())
+                        self.box = np.array([x0, y0, x1, y1])
+                        self.box -= np.array(self.dwdh * 2)
                         self.box /= self.ratio
                         self.box = self.box.round().astype(np.int32).tolist()
                         cls_id = int(cls_id)
-                        score = round(float(score),3)
+                        score = round(float(score), 3)
                         name = self.names[cls_id]
-                        self.predicted_bboxes_PascalVOC.append([name,x0,y0,x1,y1,score]) #PascalVOC annotations
-                        color = self.colors[self.names.index(name)]
-                        name += ' '+str(score)
-                        cv2.rectangle(image,self.box[:2],self.box[2:],color,2)
-                        cv2.putText(image,name,(self.box[0], self.box[1] - 2),cv2.FONT_HERSHEY_SIMPLEX,0.75,[225, 255, 255],thickness=2)
-                    self.image=image
+                        self.predicted_bboxes_PascalVOC.append([name, x0, y0, x1, y1, score])  # PascalVOC annotations
+                        
+                        # Set the color based on the predicted class
+                        color = (0, 255, 0) if name == 'normal' else (255, 0, 0)
+                        
+                        cv2.rectangle(image, self.box[:2], self.box[2:], color, 2)
+                        cv2.putText(image, name + ' ' + str(score), (self.box[0], self.box[1] - 2), cv2.FONT_HERSHEY_SIMPLEX, 0.75, [225, 255, 255], thickness=2)
+
+                    self.image = image
                 else:
-                    self.image=self.im0.copy()
+                    self.image = self.im0.copy()
         else:
-            log_i=f'Bad type for self.im\n {self.im}'
+            log_i = f'Bad type for self.im\n {self.im}'
             self.logging.error(log_i)
 
     def show(self):
