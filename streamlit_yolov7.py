@@ -175,7 +175,7 @@ class Streamlit_YOLOV7(SingleInference_YOLOV7):
         df['confidence'] = pd.to_numeric(df['confidence'], errors='coerce')
         self.image = None
 
-        st.json(json_array)
+        st.json(df)
 if __name__=='__main__':
     app=Streamlit_YOLOV7()
 
