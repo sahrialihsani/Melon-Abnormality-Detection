@@ -185,3 +185,5 @@ if __name__=='__main__':
     app.load_model() #Load the yolov7 model
     
     app.main()
+# Access the detection results array after the app has run
+print("Detection Results:", app.detection_results)
