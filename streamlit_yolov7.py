@@ -166,9 +166,18 @@ class Streamlit_YOLOV7(SingleInference_YOLOV7):
         channels="RGB",
         output_format="auto",
         )
-        flat_list = self.detection_results
+        json_array = self.detection_results
+        # Extract all values from the nested structure
+        all_values = []
+        for outer_dict in json_array:
+            for key, inner_list in outer_dict.items():
+                for inner_dict in inner_list:
+                    all_values.append(inner_dict)
+
+        # Convert the list of dictionaries to a Pandas DataFrame
+        df = pd.DataFrame(all_values)
         # df = pd.DataFrame(flat_list)
-        st.write(flat_list)
+        st.write(df)
         
         self.image = None
 
