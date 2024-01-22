@@ -166,7 +166,7 @@ class Streamlit_YOLOV7(SingleInference_YOLOV7):
         output_format="auto",
         )
         flat_list = self.detection_results[0][0]
-        st.write(flat_list)
+        st.table(flat_list)
         
         self.image = None
 
