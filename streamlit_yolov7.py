@@ -10,7 +10,6 @@ import numpy as np
 import pandas as pd
 import cv2
 from google.cloud import firestore
-import imghdr
 db = firestore.Client.from_service_account_json("meloanalytics-firebase-adminsdk-ro6mp-5f5edb4f3f.json")
 class Streamlit_YOLOV7(SingleInference_YOLOV7):
     '''
@@ -126,81 +125,59 @@ class Streamlit_YOLOV7(SingleInference_YOLOV7):
             predictions=False
 
     def load_image_st(self):
-        uploaded_file = st.file_uploader(label='Upload an image or video', type=["jpg", "jpeg", "png", "mp4"])
-        
-        if uploaded_file is not None:
-            file_type = imghdr.what(uploaded_file.name)  # Check the file type
-            if file_type in ["jpeg", "png", "jpg"]:
-                self.img_data = uploaded_file.getvalue()
-                self.im0 = Image.open(BytesIO(self.img_data))
-                self.im0 = np.array(self.im0)
-                st.image(self.im0)
-            elif file_type == "mp4":
-                self.video_data = uploaded_file.read()
-                st.video(self.video_data)
-            else:
-                st.error("Unsupported file type. Please upload an image (jpg, jpeg, png) or a video (mp4).")
-        elif type(self.im0) is not None:
+        uploaded_img=st.file_uploader(label='Upload an image')
+        if type(uploaded_img) != type(None):
+            self.img_data=uploaded_img.getvalue()
+            st.image(self.img_data)
+            self.im0=Image.open(BytesIO(self.img_data))#.convert('RGB')
+            self.im0=np.array(self.im0)
+
+            return self.im0
+        elif type(self.im0) !=type(None):
             return self.im0
         else:
             return None
-
+    
     def predict(self):
-        if hasattr(self, 'video_data'):
-            cap = cv2.VideoCapture(BytesIO(self.video_data))
-            frame_count = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
+        self.conf_thres = self.conf_selection
+        self.iou_thres = self.iou_selection
+        st.write('Loading image')
+        self.load_cv2mat(self.im0)
+        st.write('Making inference')
+        self.inference()
+        
+        self.img_screen = Image.fromarray(self.image).convert('RGB')
+        
+        self.capt = 'DETECTED:'
+        current_image_results = []  # Store results for the current image
+        
+        if len(self.predicted_bboxes_PascalVOC) > 0:
+            for item in self.predicted_bboxes_PascalVOC:
+                name = str(item[0])
+                conf = str(round(100 * item[-1], 2))
+                self.capt = self.capt + ' name=' + name + ' confidence=' + conf + '%, '
+                current_image_results.append({'name': name, 'confidence': float(conf)})
 
-            for _ in range(frame_count):
-                ret, frame = cap.read()
-                if not ret:
-                    break
-
-                self.load_cv2mat(frame)
-                self.inference()
-
-                current_image_results = []
-                for item in self.predicted_bboxes_PascalVOC:
-                    name = str(item[0])
-                    conf = str(round(100 * item[-1], 2))
-                    current_image_results.append({'name': name, 'confidence': float(conf)})
-
-                self.detection_results.append(current_image_results)
-
-            cap.release()
-        else:
-            self.conf_thres = self.conf_selection
-            self.iou_thres = self.iou_selection
-            st.write('Loading image')
-            self.load_cv2mat(self.im0)
-            st.write('Making inference')
-            self.inference()
-
-            self.img_screen = Image.fromarray(self.image).convert('RGB')
-
-            self.capt = 'DETECTED:'
-            current_image_results = []  # Store results for the current image
-
-            if len(self.predicted_bboxes_PascalVOC) > 0:
-                for item in self.predicted_bboxes_PascalVOC:
-                    name = str(item[0])
-                    conf = str(round(100 * item[-1], 2))
-                    self.capt = self.capt + ' name=' + name + ' confidence=' + conf + '%, '
-                    current_image_results.append({'name': name, 'confidence': float(conf)})
-
-            # Save the detection results for the current image
-            self.detection_results.append(current_image_results)
-
-            json_array = self.detection_results[0]
-            # Convert the list of dictionaries to a Pandas DataFrame
-            df = pd.DataFrame(json_array)
-            self.image = None
-            st.subheader("""Detection Result""")
-            st.table(df)
-            for index in df.index:
-                id = f"document_{index}"  # You can customize the title format as needed
-                doc_ref = db.collection("results").document(id)
-                doc_ref.set({"kelas": df.loc[index, 'name'], "akurasi": df.loc[index, 'confidence']})
-                
+        # Save the detection results for the current image
+        self.detection_results.append(current_image_results)
+        st.image(
+        self.img_screen,
+        width=None,
+        use_column_width=None,
+        clamp=False,
+        channels="RGB",
+        output_format="auto",
+        )
+        json_array = self.detection_results[0]
+        # Convert the list of dictionaries to a Pandas DataFrame
+        df = pd.DataFrame(json_array)
+        self.image = None
+        st.subheader("""Detection Result""")
+        st.table(df)
+        for index in df.index:
+            id = f"document_{index}"  # You can customize the title format as needed
+            doc_ref = db.collection("results").document(id)
+            doc_ref.set({"kelas": df.loc[index, 'name'], "akurasi": df.loc[index, 'confidence']})
 if __name__=='__main__':
     app=Streamlit_YOLOV7()
 
