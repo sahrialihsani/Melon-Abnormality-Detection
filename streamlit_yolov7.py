@@ -91,10 +91,10 @@ class Streamlit_YOLOV7(SingleInference_YOLOV7):
             """
             <style>
             .reportview-container {
-                background: url("https://raw.githubusercontent.com/stevensmiley1989/STREAMLIT_YOLOV7/main/misc/IMG_0512_reduce.JPG")
+                background-color: green
             }
         .sidebar .sidebar-content {
-                background: url("https://raw.githubusercontent.com/stevensmiley1989/STREAMLIT_YOLOV7/main/misc/IMG_0512_reduce.JPG")
+                background-color: green
             }
             </style>
             """,
@@ -168,4 +168,3 @@ if __name__=='__main__':
     app.load_model() #Load the yolov7 model
     
     app.main()
-
