@@ -154,13 +154,13 @@ class Streamlit_YOLOV7(SingleInference_YOLOV7):
                 conf = str(round(100 * item[-1], 2))
                 self.capt = self.capt + ' name=' + name + ' confidence=' + conf + '%, '
                 current_image_results.append({'name': name, 'confidence': float(conf)})
-        
+
+        st.table(current_image_results)
         # Save the detection results for the current image
         self.detection_results.append(current_image_results)
         
         st.image(
         self.img_screen,
-        caption=self.capt,
         width=None,
         use_column_width=None,
         clamp=False,
