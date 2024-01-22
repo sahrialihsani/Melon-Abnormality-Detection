@@ -179,7 +179,7 @@ class SingleInference_YOLOV7:
                         self.predicted_bboxes_PascalVOC.append([name, x0, y0, x1, y1, score])  # PascalVOC annotations
                         
                         # Set the color based on the predicted class
-                        color = (255, 0, 255) if name == 'normal' else (255, 0, 0)
+                        color = (255, 255, 255) if name == 'normal' else (255, 0, 0)
                         
                         cv2.rectangle(image, self.box[:2], self.box[2:], color, 2)
                         cv2.putText(image, name + ' ' + str(score), (self.box[0], self.box[1] - 2), cv2.FONT_HERSHEY_SIMPLEX, 0.75, [225, 255, 255], thickness=2)
