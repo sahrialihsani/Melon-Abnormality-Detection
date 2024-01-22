@@ -80,7 +80,13 @@ class Streamlit_YOLOV7(SingleInference_YOLOV7):
         }
         header .decoration {
             background-image: None);
-        }
+        },
+        .title-text {
+            color: white);
+        },
+        .markdown-text-container p {
+            color: white);
+        },
 
 
         </style>
