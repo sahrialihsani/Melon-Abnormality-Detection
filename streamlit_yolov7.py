@@ -168,7 +168,7 @@ class Streamlit_YOLOV7(SingleInference_YOLOV7):
         )
         flat_list = self.detection_results
         df = pd.DataFrame(flat_list)
-        st.write(flat_list)
+        st.write(df)
         
         self.image = None
 
