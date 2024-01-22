@@ -166,8 +166,8 @@ class Streamlit_YOLOV7(SingleInference_YOLOV7):
         channels="RGB",
         output_format="auto",
         )
-        flat_list = self.detection_results[0][0]
-        # df = pd.DataFrame(flat_list)
+        flat_list = self.detection_results
+        df = pd.DataFrame(flat_list)
         st.write(flat_list)
         
         self.image = None
