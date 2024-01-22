@@ -9,6 +9,8 @@ from io import BytesIO
 import numpy as np
 import pandas as pd
 import cv2
+from google.cloud import firestore
+db = firestore.Client.from_service_account_json("meloanalytics-firebase-adminsdk-ro6mp-5f5edb4f3f.json")
 class Streamlit_YOLOV7(SingleInference_YOLOV7):
     '''
     streamlit app that uses yolov7
@@ -203,6 +205,11 @@ class Streamlit_YOLOV7(SingleInference_YOLOV7):
         # Display DataFrame using st.table
         st.subheader("""Detection Result""")
         st.table(df)
+        doc_ref = db.collection("posts").document(title)
+    	doc_ref.set({
+    		"kelas": df['name'],
+    		"akurasi": df['confidence']
+    	})
         # st.dataframe(json_array)
 if __name__=='__main__':
     app=Streamlit_YOLOV7()
