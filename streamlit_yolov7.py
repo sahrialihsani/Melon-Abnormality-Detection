@@ -158,15 +158,15 @@ class Streamlit_YOLOV7(SingleInference_YOLOV7):
         st.table(current_image_results)
         # Save the detection results for the current image
         self.detection_results.append(current_image_results)
-        
-        st.image(
-        self.img_screen,
-        width=None,
-        use_column_width=None,
-        clamp=False,
-        channels="RGB",
-        output_format="auto",
-        )
+        self.image = None
+            st.image(
+            self.img_screen,
+            width=None,
+            use_column_width=None,
+            clamp=False,
+            channels="RGB",
+            output_format="auto",
+            )
         
         self.image = None
 
