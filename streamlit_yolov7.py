@@ -130,20 +130,42 @@ class Streamlit_YOLOV7(SingleInference_YOLOV7):
             if predictions:
                 self.predict()
                 predictions=False
-        # elif input_type == 'Video':
-        #     self.response=requests.get(self.path_img_i)
+        elif input_type == 'Video':
+                self.response = requests.get(self.path_img_i)
+                self.img_screen = Image.open(BytesIO(self.response.content))
+                st.image(self.img_screen, caption=self.capt, width=None, use_column_width=None, clamp=False, channels="RGB",
+                         output_format="auto")
+                st.markdown('YoloV7 on streamlit. Demo of object detection with YoloV7 with a web application.')
+                self.video_frames = np.array(self.img_screen.convert('RGB'))
+                self.load_video_st()
+                predictions = st.button('Predict on the video?')
+                if predictions:
+                    self.predict_on_video()
+                    predictions = False
+    def load_video_st(self):
+        uploaded_video = st.file_uploader(label='Upload a video', type=["mp4", "avi", "mkv"])
+        if type(uploaded_video) != type(None):
+            video_data = uploaded_video.read()
+            st.video(video_data)
+            self.video_frames = self.load_video_frames(video_data)
+            return self.video_frames
+        elif hasattr(self, 'video_frames'):
+            return self.video_frames
+        else:
+            return None
     
-        #     self.img_screen=Image.open(BytesIO(self.response.content))
-    
-        #     st.image(self.img_screen, caption=self.capt, width=None, use_column_width=None, clamp=False, channels="RGB", output_format="auto")
-        #     st.markdown('YoloV7 on streamlit.  Demo of object detection with YoloV7 with a web application.')
-        #     self.im0=np.array(self.img_screen.convert('RGB'))
-        #     self.load_video_st()
-        #     predictions = st.button('Predict on the image?')
-        #     if predictions:
-        #         self.predict()
-        #         predictions=False
-
+    # Helper method to load video frames
+    def load_video_frames(self, video_data):
+        cap = cv2.VideoCapture(BytesIO(video_data))
+        frames = []
+        while cap.isOpened():
+            ret, frame = cap.read()
+            if not ret:
+                break
+            frames.append(frame)
+        cap.release()
+        return frames
+        
     def load_image_st(self):
         uploaded_img=st.file_uploader(label='Upload an image')
         if type(uploaded_img) != type(None):
@@ -199,6 +221,52 @@ class Streamlit_YOLOV7(SingleInference_YOLOV7):
             unique_identifier = f"{current_datetime}_{index}"  # You can customize this format as needed
             doc_ref = db.collection("results").document(unique_identifier)
             doc_ref.set({"kelas": df.loc[index, 'name'], "akurasi": df.loc[index, 'confidence']})
+
+    # Add a new method to predict on video frames
+    def predict_on_video(self):
+        self.conf_thres = self.conf_selection
+        self.iou_thres = self.iou_selection
+        for frame in self.video_frames:
+            st.write('Loading video frame')
+            self.load_cv2mat(frame)
+            st.write('Making inference')
+            self.inference()
+    
+            self.img_screen = Image.fromarray(self.image).convert('RGB')
+    
+            self.capt = 'DETECTED:'
+            current_frame_results = []  # Store results for the current video frame
+    
+            if len(self.predicted_bboxes_PascalVOC) > 0:
+                for item in self.predicted_bboxes_PascalVOC:
+                    name = str(item[0])
+                    conf = str(round(100 * item[-1], 2))
+                    self.capt = self.capt + ' name=' + name + ' confidence=' + conf + '%, '
+                    current_frame_results.append({'name': name, 'confidence': float(conf)})
+    
+            # Save the detection results for the current video frame
+            self.detection_results.append(current_frame_results)
+            st.image(
+                self.img_screen,
+                width=None,
+                use_column_width=None,
+                clamp=False,
+                channels="RGB",
+                output_format="auto",
+            )
+            json_array = self.detection_results[0]
+            # Convert the list of dictionaries to a Pandas DataFrame
+            df = pd.DataFrame(json_array)
+            self.image = None
+            st.subheader("""Detection Result""")
+            st.table(df)
+            for index in df.index:
+                # Generate a unique document ID based on the date and time
+                current_datetime = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
+                unique_identifier = f"{current_datetime}_{index}"  # You can customize this format as needed
+                doc_ref = db.collection("results").document(unique_identifier)
+                doc_ref.set({"kelas": df.loc[index, 'name'], "akurasi": df.loc[index, 'confidence']})
+            
 if __name__=='__main__':
     app=Streamlit_YOLOV7()
 
