@@ -205,8 +205,10 @@ class Streamlit_YOLOV7(SingleInference_YOLOV7):
         # Display DataFrame using st.table
         st.subheader("""Detection Result""")
         st.table(df)
-        doc_ref = db.collection("posts").document(title)
-    	doc_ref.set({"kelas": df['name'],"akurasi": df['confidence']})
+        for index in df.index:
+            id = f"document_{index}"  # You can customize the title format as needed
+            doc_ref = db.collection("results").document(id)
+            doc_ref.set({"kelas": df.loc[index, 'name'], "akurasi": df.loc[index, 'confidence']})
         # st.dataframe(json_array)
 if __name__=='__main__':
     app=Streamlit_YOLOV7()
