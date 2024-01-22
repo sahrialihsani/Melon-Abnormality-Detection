@@ -171,7 +171,7 @@ class Streamlit_YOLOV7(SingleInference_YOLOV7):
         # df = pd.DataFrame(json_array)
         # df["confidence"] = pd.to_numeric(df["confidence"])
         df = pd.DataFrame(json_array)
-        st.write(json_array)
+        st.table(json_array)
         
         self.image = None
 
