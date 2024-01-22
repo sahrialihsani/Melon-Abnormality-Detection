@@ -45,7 +45,7 @@ class Streamlit_YOLOV7(SingleInference_YOLOV7):
     def main(self):
         st.title('Custom YoloV7 Object Detector')
         st.subheader(""" Upload an image and run YoloV7 on it.  
-        This model was trained to detect the following classes from a drone's vantage point. 
+        This model was trained to detect melon abnormality on leaves. 
         Notice where the model fails.
         (i.e. objects too close up & too far away):\n""")
         st.markdown(
