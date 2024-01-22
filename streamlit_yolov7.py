@@ -1,5 +1,4 @@
-!pip install --upgrade numpy
-import singleinference_yolov7
+\import singleinference_yolov7
 from singleinference_yolov7 import SingleInference_YOLOV7
 import os
 import streamlit as st
