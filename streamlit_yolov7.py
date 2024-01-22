@@ -56,7 +56,7 @@ class Streamlit_YOLOV7(SingleInference_YOLOV7):
         }
         .sidebar .sidebar-content {
             background-image: linear-gradient(#2e7bcf,#2e7bcf);
-            color: black;
+            color: white;
         }
         .Widget>label {
             color: green;
@@ -76,7 +76,7 @@ class Streamlit_YOLOV7(SingleInference_YOLOV7):
             font-family: monospace;
         }
         .reportview-container .main footer, .reportview-container .main footer a {
-            color: black;
+            color: white;
         }
         header .decoration {
             background-image: None);
