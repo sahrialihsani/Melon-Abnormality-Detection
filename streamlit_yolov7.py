@@ -155,7 +155,6 @@ class Streamlit_YOLOV7(SingleInference_YOLOV7):
                 self.capt = self.capt + ' name=' + name + ' confidence=' + conf + '%, '
                 current_image_results.append({'name': name, 'confidence': float(conf)})
 
-        st.table(current_image_results)
         # Save the detection results for the current image
         self.detection_results.append(current_image_results)
         st.image(
@@ -184,5 +183,5 @@ if __name__=='__main__':
     app.load_model() #Load the yolov7 model
     
     app.main()
-# Access the detection results array after the app has run
-print("Detection Results:", app.detection_results)
+    if hasattr(app, 'detection_results'):
+        st.table(app.detection_results)
