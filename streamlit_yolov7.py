@@ -13,6 +13,7 @@ class Streamlit_YOLOV7(SingleInference_YOLOV7):
     streamlit app that uses yolov7
     '''
     def __init__(self,):
+        self.detection_results = []
         self.logging_main=logging
         self.logging_main.basicConfig(level=self.logging_main.DEBUG)
 
