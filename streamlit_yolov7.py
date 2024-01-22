@@ -47,6 +47,7 @@ class Streamlit_YOLOV7(SingleInference_YOLOV7):
         
         '''
         super().__init__(img_size,path_yolov7_weights,path_img_i,device_i=device_i)
+    
     def main(self):
         st.title('Melon Abnormality Detection')
         st.subheader(""" Upload an image and run YoloV7 on it.  
@@ -111,19 +112,37 @@ class Streamlit_YOLOV7(SingleInference_YOLOV7):
         # st.selectbox('Classes',tuple(text_i_list))
         self.conf_selection=st.selectbox('Confidence Threshold',tuple([0.5,0.75,0.95]))
         self.iou_selection=st.selectbox('IoU Threshold',tuple([0.5,0.75,0.95]))
-        
-        self.response=requests.get(self.path_img_i)
 
-        self.img_screen=Image.open(BytesIO(self.response.content))
+        input_type = st.sidebar.selectbox(
+            'Input Type', ('Image', 'Video')
+        )
 
-        st.image(self.img_screen, caption=self.capt, width=None, use_column_width=None, clamp=False, channels="RGB", output_format="auto")
-        st.markdown('YoloV7 on streamlit.  Demo of object detection with YoloV7 with a web application.')
-        self.im0=np.array(self.img_screen.convert('RGB'))
-        self.load_image_st()
-        predictions = st.button('Predict on the image?')
-        if predictions:
-            self.predict()
-            predictions=False
+        if input_type == 'Image':
+            self.response=requests.get(self.path_img_i)
+    
+            self.img_screen=Image.open(BytesIO(self.response.content))
+    
+            st.image(self.img_screen, caption=self.capt, width=None, use_column_width=None, clamp=False, channels="RGB", output_format="auto")
+            st.markdown('YoloV7 on streamlit.  Demo of object detection with YoloV7 with a web application.')
+            self.im0=np.array(self.img_screen.convert('RGB'))
+            self.load_image_st()
+            predictions = st.button('Predict on the image?')
+            if predictions:
+                self.predict()
+                predictions=False
+        # elif input_type == 'Video':
+        #     self.response=requests.get(self.path_img_i)
+    
+        #     self.img_screen=Image.open(BytesIO(self.response.content))
+    
+        #     st.image(self.img_screen, caption=self.capt, width=None, use_column_width=None, clamp=False, channels="RGB", output_format="auto")
+        #     st.markdown('YoloV7 on streamlit.  Demo of object detection with YoloV7 with a web application.')
+        #     self.im0=np.array(self.img_screen.convert('RGB'))
+        #     self.load_video_st()
+        #     predictions = st.button('Predict on the image?')
+        #     if predictions:
+        #         self.predict()
+        #         predictions=False
 
     def load_image_st(self):
         uploaded_img=st.file_uploader(label='Upload an image')
@@ -132,12 +151,60 @@ class Streamlit_YOLOV7(SingleInference_YOLOV7):
             st.image(self.img_data)
             self.im0=Image.open(BytesIO(self.img_data))#.convert('RGB')
             self.im0=np.array(self.im0)
-
             return self.im0
         elif type(self.im0) !=type(None):
             return self.im0
         else:
             return None
+
+    def load_video_st(self):
+        uploaded_video = st.file_uploader(label='Upload a video', type=['mp4', 'avi'])
+        
+        if type(uploaded_video) != type(None):
+            self.video_data = uploaded_video.read()
+            st.video(self.video_data)
+            # You can perform additional processing on the video data if needed
+            # For example, you might want to use OpenCV to extract frames or analyze the video.
+            
+            # For now, just returning the video data
+            return self.video_data
+        elif type(self.video_data) != type(None):
+            return self.video_data
+        else:
+            return None
+
+    def extract_frames(video_path):
+        # Open the video file
+        cap = cv2.VideoCapture(video_path)
+    
+        # Check if the video opened successfully
+        if not cap.isOpened():
+            print("Error: Couldn't open the video file.")
+            return None
+    
+        # Create a list to store image paths
+        image_paths = []
+    
+        # Get video properties
+        frame_count = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
+    
+        print(f"Total Frames: {frame_count}")
+    
+        # Read and save each frame
+        for frame_number in range(frame_count):
+            ret, frame = cap.read()
+    
+            if not ret:
+                print(f"Error reading frame {frame_number}. Skipping.")
+                continue
+    
+            # Get image path without saving
+            image_path = f"frame_{frame_number:04d}.jpg"
+            image_paths.append(image_path)
+    
+        # Release the video capture object
+        cap.release()
+        return image_paths
     
     def predict(self):
         self.conf_thres = self.conf_selection
