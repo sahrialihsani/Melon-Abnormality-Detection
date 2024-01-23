@@ -263,7 +263,7 @@ class Streamlit_YOLOV7(SingleInference_YOLOV7):
             json_array = current_frame_results # Use results for the last frame
             df = pd.DataFrame(json_array)
             st.subheader("""Detection Result""")
-            st.write(df)
+            st.table(df)
             # for index in df.index:
             #     # Generate a unique document ID based on the date and time
             #     current_datetime = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
