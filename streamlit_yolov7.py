@@ -232,7 +232,6 @@ class Streamlit_YOLOV7(SingleInference_YOLOV7):
             doc_ref = db.collection("results").document(unique_identifier)
             doc_ref.set({"kelas": df.loc[index, 'name'], "akurasi": df.loc[index, 'confidence']})
 
-    # Add a new method to predict on video frames
     def predict_on_video(self):
         self.conf_thres = self.conf_selection
         self.iou_thres = self.iou_selection
@@ -264,8 +263,10 @@ class Streamlit_YOLOV7(SingleInference_YOLOV7):
                 channels="RGB",
                 output_format="auto",
             )
-            json_array = self.detection_results[0]
-            # Convert the list of dictionaries to a Pandas DataFrame
+    
+        # Create DataFrame and store results after processing all frames
+        if self.detection_results:
+            json_array = self.detection_results  # Use results for the last frame
             df = pd.DataFrame(json_array)
             self.image = None
             st.subheader("""Detection Result""")
