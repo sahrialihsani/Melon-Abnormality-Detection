@@ -252,9 +252,16 @@ class Streamlit_YOLOV7(SingleInference_YOLOV7):
                     conf = str(round(100 * item[-1], 2))
                     self.capt = self.capt + ' name=' + name + ' confidence=' + conf + '%, '
                     current_frame_results.append({'name': name, 'confidence': float(conf)})
-    
-            # Save the detection results for the current video frame
-            self.detection_results.append(current_frame_results)
+                    json_array = current_frame_results[0] # Use results for the last frame
+                    df = pd.DataFrame(json_array)
+                    st.subheader("""Detection Result""")
+                    st.table(df)
+                    for index in df.index:
+                        # Generate a unique document ID based on the date and time
+                        current_datetime = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
+                        unique_identifier = f"{current_datetime}_{index}"  # You can customize this format as needed
+                        doc_ref = db.collection("results").document(unique_identifier)
+                        doc_ref.set({"kelas": df.loc[index, 'name'], "akurasi": df.loc[index, 'confidence']})
             st.image(
                 self.img_screen,
                 width=None,
@@ -263,20 +270,7 @@ class Streamlit_YOLOV7(SingleInference_YOLOV7):
                 channels="RGB",
                 output_format="auto",
             )
-    
-        # Create DataFrame and store results after processing all frames
-        if self.detection_results:
-            json_array = self.detection_results  # Use results for the last frame
-            df = pd.DataFrame(json_array)
             self.image = None
-            st.subheader("""Detection Result""")
-            st.table(df)
-            for index in df.index:
-                # Generate a unique document ID based on the date and time
-                current_datetime = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
-                unique_identifier = f"{current_datetime}_{index}"  # You can customize this format as needed
-                doc_ref = db.collection("results").document(unique_identifier)
-                doc_ref.set({"kelas": df.loc[index, 'name'], "akurasi": df.loc[index, 'confidence']})
             
 if __name__=='__main__':
     app=Streamlit_YOLOV7()
