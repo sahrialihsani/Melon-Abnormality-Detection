@@ -10,7 +10,9 @@ import numpy as np
 import pandas as pd
 import cv2
 import datetime
+import tempfile
 from google.cloud import firestore
+
 db = firestore.Client.from_service_account_json("meloanalytics-firebase-adminsdk-ro6mp-5f5edb4f3f.json")
 class Streamlit_YOLOV7(SingleInference_YOLOV7):
     '''
@@ -156,7 +158,13 @@ class Streamlit_YOLOV7(SingleInference_YOLOV7):
     
     # Helper method to load video frames
     def load_video_frames(self, video_data):
-        cap = cv2.VideoCapture(BytesIO(video_data))
+        # Save video data to a temporary file
+        temp_file = tempfile.NamedTemporaryFile(delete=False)
+        temp_file.write(video_data)
+        temp_file_path = temp_file.name
+        temp_file.close()
+    
+        cap = cv2.VideoCapture(temp_file_path)
         frames = []
         while cap.isOpened():
             ret, frame = cap.read()
@@ -164,6 +172,10 @@ class Streamlit_YOLOV7(SingleInference_YOLOV7):
                 break
             frames.append(frame)
         cap.release()
+    
+        # Delete the temporary file after use
+        os.remove(temp_file_path)
+    
         return frames
         
     def load_image_st(self):
