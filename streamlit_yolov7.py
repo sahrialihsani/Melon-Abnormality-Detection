@@ -14,7 +14,8 @@ import tempfile
 import ntplib
 from google.cloud import firestore
 
-db = firestore.Client.from_service_account_json("meloanalytics-firebase-adminsdk-ro6mp-5f5edb4f3f.json")
+firestore_credentials = st.secrets["firestore"]['credentials']
+db = firestore.Client.from_service_account_json(firestore_credentials)
 class Streamlit_YOLOV7(SingleInference_YOLOV7):
     '''
     streamlit app that uses yolov7
