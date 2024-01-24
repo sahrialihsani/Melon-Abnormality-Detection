@@ -249,7 +249,7 @@ if __name__=='__main__':
 
     #INPUTS
     img_size=640
-    path_yolov7_weights="weights/best.pt"
+    path_yolov7_weights= ["weights/best_1.pt","weights/best_2.pt","weights/best_3.pt","weights/best_4.pt"]
     path_img_i=r"test_images/2020-02-18-22-54-20_jpg.rf.fb182d3ca77327e644c61382fe0c9ffe.jpg"
     #path_img_i=r"/media/steven/Elements/Drone_Videos_Park/FPS_DESIRED_1d5/JPEGImages/DJI_0028_fps24_frame00000040.jpg"
 
