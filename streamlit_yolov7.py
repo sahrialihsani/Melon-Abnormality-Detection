@@ -227,7 +227,7 @@ class Streamlit_YOLOV7(SingleInference_YOLOV7):
         st.table(df)
         for index in df.index:
             # Generate a unique document ID based on the date and time
-            current_datetime = datetime.datetime.now()
+            current_datetime = datetime.datetime.now().strftime("%Y-%m-%d %H-%M-%S")
             unique_identifier = f"{current_datetime}"  # You can customize this format as needed
             doc_ref = db.collection("results").document()
             doc_ref.set({"waktu": unique_identifier, "kelas": df.loc[index, 'name'], "akurasi": df.loc[index, 'confidence']})
@@ -266,7 +266,7 @@ class Streamlit_YOLOV7(SingleInference_YOLOV7):
             st.table(df)
             for index in df.index:
                 # Generate a unique document ID based on the date and time
-                current_datetime = datetime.datetime.now()
+                current_datetime = datetime.datetime.now().strftime("%Y-%m-%d %H-%M-%S")
                 unique_identifier = f"{current_datetime}"  # You can customize this format as needed
                 doc_ref = db.collection("results").document()
                 doc_ref.set({"waktu": unique_identifier, "kelas": df.loc[index, 'name'], "akurasi": df.loc[index, 'confidence']})
