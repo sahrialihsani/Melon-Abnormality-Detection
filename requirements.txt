@@ -5,3 +5,4 @@ torchvision
 requests
 yolov7
 google-cloud-firestore
+ntplib
