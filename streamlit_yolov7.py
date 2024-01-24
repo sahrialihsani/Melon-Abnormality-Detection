@@ -11,6 +11,7 @@ import pandas as pd
 import cv2
 import datetime
 import tempfile
+import ntplib
 from google.cloud import firestore
 
 db = firestore.Client.from_service_account_json("meloanalytics-firebase-adminsdk-ro6mp-5f5edb4f3f.json")
@@ -188,7 +189,11 @@ class Streamlit_YOLOV7(SingleInference_YOLOV7):
             return self.im0
         else:
             return None
-    
+    def get_current_datetime(self):
+        client = ntplib.NTPClient()
+        response = client.request('pool.ntp.org')
+        return datetime.utcfromtimestamp(response.tx_time).strftime('%Y-%m-%d %H-%M-%S')
+
     def predict(self):
         self.conf_thres = self.conf_selection
         self.iou_thres = self.iou_selection
@@ -227,7 +232,7 @@ class Streamlit_YOLOV7(SingleInference_YOLOV7):
         st.table(df)
         for index in df.index:
             # Generate a unique document ID based on the date and time
-            current_datetime = datetime.datetime.now().strftime("%Y-%m-%d %H-%M-%S")
+            current_datetime = self.get_current_datetime()
             unique_identifier = f"{current_datetime}"  # You can customize this format as needed
             doc_ref = db.collection("results").document()
             doc_ref.set({"waktu": unique_identifier, "kelas": df.loc[index, 'name'], "akurasi": df.loc[index, 'confidence']})
@@ -266,7 +271,7 @@ class Streamlit_YOLOV7(SingleInference_YOLOV7):
             st.table(df)
             for index in df.index:
                 # Generate a unique document ID based on the date and time
-                current_datetime = datetime.datetime.now().strftime("%Y-%m-%d %H-%M-%S")
+                current_datetime = self.get_current_datetime()
                 unique_identifier = f"{current_datetime}"  # You can customize this format as needed
                 doc_ref = db.collection("results").document()
                 doc_ref.set({"waktu": unique_identifier, "kelas": df.loc[index, 'name'], "akurasi": df.loc[index, 'confidence']})
