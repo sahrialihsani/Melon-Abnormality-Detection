@@ -54,7 +54,7 @@ class Streamlit_YOLOV7(SingleInference_YOLOV7):
     def main(self):
         st.title('MeloAnalytics')
         st.subheader(""" Upload image and video then run YoloV7 on it.  
-        Use multiple models to gain melon abnormality on leaves more accurate.\n""")
+        Use multiple models to gain accuracy of melon abnormality on leaves more accurate.\n""")
         st.markdown(
             """
         <style>
@@ -108,11 +108,6 @@ class Streamlit_YOLOV7(SingleInference_YOLOV7):
             """,
             unsafe_allow_html=True
         )
-        # text_i_list=[]
-        # for i,name_i in enumerate(self.names):
-        #     #text_i_list.append(f'id={i} \t \t name={name_i}\n')
-        #     text_i_list.append(f'{i}: {name_i}\n')
-        # st.selectbox('Classes',tuple(text_i_list))
         self.conf_selection=st.selectbox('Confidence Threshold',tuple([0.5,0.75,0.95]))
         self.iou_selection=st.selectbox('IoU Threshold',tuple([0.5,0.75,0.95]))
 
