@@ -282,7 +282,7 @@ if __name__=='__main__':
 
     #INPUTS for YOLOV7
     img_size=1056
-    path_yolov7_weights="weights/best_1.pt weights/best_2.pt weights/best_3.pt weights/best4.pt"
+    path_yolov7_weights= ["weights/best_1.pt","weights/best_2.pt","weights/best_3.pt","weights/best_4.pt"]
     path_img_i="https://raw.githubusercontent.com/sahrialihsani/Melon-Abnormality-Detection/main/test_images/2020-02-18-22-54-20_jpg.rf.fb182d3ca77327e644c61382fe0c9ffe.jpg"
     #INPUTS for webapp
     app.capt="Initial Image"
