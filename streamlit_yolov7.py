@@ -9,7 +9,7 @@ from io import BytesIO
 import numpy as np
 import pandas as pd
 import cv2
-import datetime
+from datetime import datetime, timezone
 import tempfile
 import ntplib
 from google.cloud import firestore
@@ -193,8 +193,8 @@ class Streamlit_YOLOV7(SingleInference_YOLOV7):
     def get_current_datetime(self):
         client = ntplib.NTPClient()
         response = client.request('pool.ntp.org')
-        return datetime.utcfromtimestamp(response.tx_time).strftime('%Y-%m-%d %H-%M-%S')
-
+        return datetime.fromtimestamp(response.tx_time, tz=timezone.utc).strftime('%Y-%m-%d %H-%M-%S')
+        
     def predict(self):
         self.conf_thres = self.conf_selection
         self.iou_thres = self.iou_selection
