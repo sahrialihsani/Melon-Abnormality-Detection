@@ -52,9 +52,9 @@ class Streamlit_YOLOV7(SingleInference_YOLOV7):
         super().__init__(img_size,path_yolov7_weights,path_img_i,device_i=device_i)
     
     def main(self):
-        st.title('Melon Abnormality Detection')
-        st.subheader(""" Upload an image and run YoloV7 on it.  
-        This model was trained to detect melon abnormality on leaves.\n""")
+        st.title('MeloAnalytics')
+        st.subheader(""" Upload image and video then run YoloV7 on it.  
+        Use multiple models to gain melon abnormality on leaves more accurate.\n""")
         st.markdown(
             """
         <style>
