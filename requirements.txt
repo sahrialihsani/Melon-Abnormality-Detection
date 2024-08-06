@@ -1,4 +1,5 @@
 opencv-python-headless
+opencv-python-contrib-headless
 streamlit
 torch
 torchvision
