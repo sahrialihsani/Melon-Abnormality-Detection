@@ -1,12 +1,16 @@
-
 import random
+import numpy as np
+import cv2
+import logging
+from models.experimental import attempt_load
+from utils.general import check_img_size, non_max_suppression, scale_coords
+from utils.torch_utils import select_device
 import numpy as np
 import os
 import sys
 import torch
-import cv2
-import logging
-#
+from PIL import Image
+import io
 
 class SingleInference_YOLOV7:
     '''
@@ -37,8 +41,8 @@ class SingleInference_YOLOV7:
     img_size, path_yolov7_weights, 
     path_img_i='None',
     device_i='cpu',
-    conf_thres=0.25,
-    iou_thres=0.5):
+    conf_thres=0.5,
+    iou_thres=0.75):
 
         self.conf_thres=conf_thres
         self.iou_thres=iou_thres
@@ -68,8 +72,6 @@ class SingleInference_YOLOV7:
         #    os.makedirs('logs')
         #self.logging.basicConfig(filename='logs/'+str(self.__class__.__name__)+'.log',filemode='w',format='%(name)s - %(levelname)s - %(message)s',level=self.logging.ERROR)
         self.logging.basicConfig(level=self.logging.DEBUG)
-
-
 
     def load_model(self):
         '''
@@ -114,7 +116,6 @@ class SingleInference_YOLOV7:
         else:
             log_i=f'read_img \t Bad type for path_img_i\n {path_img_i}'
             self.logging.error(log_i)
-
 
     def load_cv2mat(self,im0=None):
         '''
@@ -181,7 +182,7 @@ class SingleInference_YOLOV7:
                         # Set the color based on the predicted class
                         color = (0, 255, 255) if name == 'normal' else (255, 0, 0)
                         
-                        cv2.rectangle(image, self.box[:2], self.box[2:], color, 2)
+                        cv2.rectangle(image, (self.box[0], self.box[1]), (self.box[2], self.box[3]), color, 2)
                         cv2.putText(image, name + ' ' + str(score), (self.box[0], self.box[1] - 2), cv2.FONT_HERSHEY_SIMPLEX, 0.75, [225, 255, 255], thickness=2)
 
                     self.image = image
@@ -195,19 +196,21 @@ class SingleInference_YOLOV7:
         '''
         Displays the detections if any are present
         '''
-        if len(self.predicted_bboxes_PascalVOC)>0:
-            self.TITLE='Press any key or click mouse to quit'
+        if len(self.predicted_bboxes_PascalVOC) > 0:
+            self.TITLE = 'Press any key or click mouse to quit'
             cv2.namedWindow(self.TITLE)
-            cv2.setMouseCallback(self.TITLE,self.onMouse)
+            cv2.setMouseCallback(self.TITLE, self.onMouse)
             while cv2.waitKey(1) == -1 and not self.clicked:
-                #print(self.image.shape)
                 cv2.imshow(self.TITLE, self.image)
             cv2.destroyAllWindows()
-            self.clicked=False
+            self.clicked = False
         else:
-            log_i=f'Nothing detected for {self.path_img_i} \n \t w/ conf_thres={self.conf_thres} & iou_thres={self.iou_thres}'
+            log_i = f'Nothing detected for {self.path_img_i} \n \t w/ conf_thres={self.conf_thres} & iou_thres={self.iou_thres}'
             self.logging.debug(log_i)
-
+        
+        # Save the image as JPEG
+        cv2.imwrite('detected_image.jpg', self.image)
+            
     def letterbox(self,im, new_shape=(640, 640), color=(114, 114, 114), auto=True, scaleup=True, stride=32):
         '''
         Formats the image in letterbox format for yolov7
@@ -238,6 +241,7 @@ class SingleInference_YOLOV7:
         left, right = int(round(dw - 0.1)), int(round(dw + 0.1))
         im = cv2.copyMakeBorder(im, top, bottom, left, right, cv2.BORDER_CONSTANT, value=color)  # add border
         return im, r, (dw, dh)
+    
     def onMouse(self,event,x,y,flags,param):
         '''
         Handles closing example window
@@ -247,30 +251,23 @@ class SingleInference_YOLOV7:
 
 if __name__=='__main__':  
 
-    #INPUTS
-    img_size=640
-    path_yolov7_weights= ["weights/best_1.pt","weights/best_2.pt","weights/best_3.pt","weights/best_4.pt"]
-    path_img_i=r"test_images/2020-02-18-22-54-20_jpg.rf.fb182d3ca77327e644c61382fe0c9ffe.jpg"
-    #path_img_i=r"/media/steven/Elements/Drone_Videos_Park/FPS_DESIRED_1d5/JPEGImages/DJI_0028_fps24_frame00000040.jpg"
+    # INPUTS
+    img_size = 640
+    path_img_i=r"yolov7/figure/testMelon.jpg"
+    path_yolov7_weights = ["weights/maximum_epochs/best_fold4.pt"]
 
-    #INITIALIZE THE app
-    app=SingleInference_YOLOV7(img_size,path_yolov7_weights,path_img_i,device_i='cpu',conf_thres=0.5,iou_thres=0.75)
-
-    #LOAD & INFERENCE
-    app.load_model() #Load the yolov7 model
+    # Load the yolov7 model
+    app = SingleInference_YOLOV7(img_size, path_yolov7_weights, device_i='cpu', conf_thres=0.5, iou_thres=0.75)
+    app.load_model()
     app.read_img(path_img_i) #read in the jpg image from the full path, note not required if you want to load a cv2matrix instead directly
     app.load_cv2mat() #load the OpenCV matrix, note could directly feed a cv2matrix here as app.load_cv2mat(cv2matrix)
     app.inference() #make single inference
     app.show() #show results
-    print(f'''
-    app.predicted_bboxes_PascalVOC\n
-    \t name,x0,y0,x1,y1,score\n
-    {app.predicted_bboxes_PascalVOC}''') 
-
-
-
-
-
-
-
-
+    
+    current_image_results = []  # Store results for the current image
+    if len(app.predicted_bboxes_PascalVOC) > 0:
+        for item in app.predicted_bboxes_PascalVOC:
+            name = str(item[0])
+            conf = str(round(100 * item[-1], 2))
+            current_image_results.append({'name': name, 'confidence': float(conf)})
+    print(len(current_image_results))
