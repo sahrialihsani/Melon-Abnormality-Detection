@@ -10,3 +10,4 @@ torchvision
 ntplib
 opencv-contrib-python-headless
 tqdm
+yaml
