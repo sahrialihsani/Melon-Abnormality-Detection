@@ -347,7 +347,7 @@ if __name__ == '__main__':
     # INPUTS for YOLOV7
     img_size = 640
     path_yolov7_weights = ["weights/maximum_epochs/best_fold4.pt"]
-    path_img_i = "https://github.com/sahrialihsani/Melon-Abnormality-Detection/blob/main/test_images/test.jpg"
+    path_img_i = "test_images/test.jpg"
     # INPUTS for webapp
     app.capt = "Initial Image"
     app.new_yolo_model(img_size, path_yolov7_weights, path_img_i)
