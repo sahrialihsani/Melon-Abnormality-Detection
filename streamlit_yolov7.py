@@ -77,8 +77,7 @@ class Streamlit_YOLOV7(SingleInference_YOLOV7):
 
         if input_type == 'Image':
             self.response = requests.get(self.path_img_i)
-            self.response.raise_for_status()
-            self.img_screen = Image.open(self.response.content)
+            self.img_screen = Image.open(BytesIO(self.response.content))
             st.image(self.img_screen, caption=self.capt, width=None, use_column_width=None, clamp=False, channels="RGB", output_format="auto")
             st.markdown('YOLOv7 on Streamlit. Demo of object detection with YOLOv7 with a web application.')
             self.im0 = np.array(self.img_screen.convert('RGB'))
@@ -91,7 +90,6 @@ class Streamlit_YOLOV7(SingleInference_YOLOV7):
 
         elif input_type == 'Video':
             self.response = requests.get(self.path_img_i)
-            self.response.raise_for_status()
             self.img_screen = Image.open(BytesIO(self.response.content))
             st.markdown('YOLOv7 on Streamlit. Demo of object detection with YOLOv7 with a web application.')
             self.video_frames = np.array(self.img_screen.convert('RGB'))
@@ -347,7 +345,7 @@ if __name__ == '__main__':
     # INPUTS for YOLOV7
     img_size = 640
     path_yolov7_weights = ["weights/maximum_epochs/best_fold4.pt"]
-    path_img_i = "test_images/test.jpg"
+    path_img_i = "https://raw.githubusercontent.com/sahrialihsani/Melon-Abnormality-Detection/main/test_images/test.jpg"
     # INPUTS for webapp
     app.capt = "Initial Image"
     app.new_yolo_model(img_size, path_yolov7_weights, path_img_i)
