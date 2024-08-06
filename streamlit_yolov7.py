@@ -12,6 +12,7 @@ import cv2
 from datetime import datetime, timezone
 import tempfile
 from google.cloud import firestore
+import uuid
 
 db = firestore.Client.from_service_account_json("firestore_credentials.json")
 
@@ -157,12 +158,13 @@ class Streamlit_YOLOV7(SingleInference_YOLOV7):
         df_all_frames = pd.DataFrame(all_frame_results)
         st.subheader("Consolidated Detection Results for All Frames")
         st.table(df_all_frames)
-    
         for index in df_all_frames.index:
+            random_id = str(uuid.uuid4())
             current_datetime = self.get_current_datetime()
             unique_identifier = f"{current_datetime}"
-            doc_ref = db.collection("results").document()
+            doc_ref = db.collection("results").document(random_id)
             doc_ref.set({
+                "id": random_id,
                 "waktu": unique_identifier,
                 "kelas": df_all_frames.loc[index, 'name'],
                 "akurasi": df_all_frames.loc[index, 'confidence']
@@ -265,10 +267,11 @@ class Streamlit_YOLOV7(SingleInference_YOLOV7):
             st.write("Tanaman Terdapat Penyakit / Defisiensi Unsur Hara: Jumlah daun abnormal lebih besar dari jumlah daun normal.")
 
         for index in df.index:
+            random_id = str(uuid.uuid4())
             current_datetime = self.get_current_datetime()
             unique_identifier = f"{current_datetime}"
-            doc_ref = db.collection("results").document()
-            doc_ref.set({"waktu": unique_identifier, "kelas": df.loc[index, 'name'], "akurasi": df.loc[index, 'confidence']})
+            doc_ref = db.collection("results").document(random_id)
+            doc_ref.set({"id": random_id, "waktu": unique_identifier, "kelas": df.loc[index, 'name'], "akurasi": df.loc[index, 'confidence']})
 
     def predict_on_video(self):
         try:
@@ -318,10 +321,12 @@ class Streamlit_YOLOV7(SingleInference_YOLOV7):
 
             # Storing results in Firestore
             for index in df_all_frames.index:
+                random_id = str(uuid.uuid4())
                 current_datetime = self.get_current_datetime()
                 unique_identifier = f"{current_datetime}"
                 doc_ref = db.collection("results").document()
                 doc_ref.set({
+                    "id": random_id,
                     "waktu": unique_identifier,
                     "kelas": df_all_frames.loc[index, 'name'],
                     "akurasi": df_all_frames.loc[index, 'confidence']
