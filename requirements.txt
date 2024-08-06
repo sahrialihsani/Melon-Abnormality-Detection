@@ -13,3 +13,4 @@ tqdm
 PyYAML
 matplotlib
 seaborn
+scipy
