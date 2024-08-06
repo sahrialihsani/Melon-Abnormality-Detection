@@ -8,5 +8,4 @@ google-cloud-firestore
 torch
 torchvision
 ntplib
-yolov7
 opencv-contrib-python-headless
