@@ -1,9 +1,12 @@
-opencv-python-headless
-opencv-python-contrib-headless
 streamlit
+requests
+Pillow
+numpy
+pandas
+opencv-python-headless
+google-cloud-firestore
 torch
 torchvision
-requests
-yolov7
-google-cloud-firestore
 ntplib
+yolov7
+opencv-python-contrib-headless
