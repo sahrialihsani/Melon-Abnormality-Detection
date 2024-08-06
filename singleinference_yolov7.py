@@ -253,7 +253,7 @@ if __name__=='__main__':
 
     # INPUTS
     img_size = 640
-    path_img_i=r"yolov7/figure/testMelon.jpg"
+    path_img_i=r"test_images/test.jpg"
     path_yolov7_weights = ["weights/maximum_epochs/best_fold4.pt"]
 
     # Load the yolov7 model
