@@ -78,7 +78,7 @@ class Streamlit_YOLOV7(SingleInference_YOLOV7):
         if input_type == 'Image':
             self.response = requests.get(self.path_img_i)
             self.response.raise_for_status()
-            self.img_screen = Image.open(self.response.content))
+            self.img_screen = Image.open(self.response.content)
             st.image(self.img_screen, caption=self.capt, width=None, use_column_width=None, clamp=False, channels="RGB", output_format="auto")
             st.markdown('YOLOv7 on Streamlit. Demo of object detection with YOLOv7 with a web application.')
             self.im0 = np.array(self.img_screen.convert('RGB'))
