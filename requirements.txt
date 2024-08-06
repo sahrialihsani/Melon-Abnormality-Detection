@@ -9,4 +9,4 @@ torch
 torchvision
 ntplib
 yolov7
-opencv-python-contrib-headless
+opencv-contrib-python-headless
