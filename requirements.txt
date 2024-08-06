@@ -11,3 +11,4 @@ ntplib
 opencv-contrib-python-headless
 tqdm
 PyYAML
+matplotlib
